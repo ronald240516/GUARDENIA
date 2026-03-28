@@ -1,0 +1,320 @@
+/* ==========================================
+   1. ESTILOS GENERALES Y TIPOGRAFÍA GLOBAL
+   ========================================== */
+
+/* Aplicar la tipografía Inter (Estilo Fintech/Apple) a TODA la app */
+body, input, button, select, p, div, span, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif !important;
+}
+/* ¡NUEVO! Proteger los íconos para que sigan siendo íconos y no texto */
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined' !important;
+}
+
+/* Limita el ancho en PC para que se vea siempre como una App móvil */
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+/* Ocultar pantallas */
+.oculto {
+    display: none !important;
+}
+
+/* ==========================================
+   2. ARQUITECTURA FLEXBOX (APP NATIVA)
+   ========================================== */
+
+/* Convertimos Inicio, Alumnos y Dashboard en contenedores rígidos (100vh) */
+#pantalla-inicio:not(.oculto), 
+#pantalla-alumnos:not(.oculto),
+#pantalla-dashboard:not(.oculto) {
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; /* Prohíbe el scroll de toda la página */
+    padding-bottom: 0 !important;
+}
+
+/* Cabeceras rígidas (No se encogen al hacer scroll) */
+.md-sticky-header,
+.cabecera-fija-dashboard {
+    flex-shrink: 0 !important;
+    position: relative !important; 
+    z-index: 1000;
+}
+
+.md-sticky-header {
+    background-color: var(--bs-light);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Las listas son las ÚNICAS que hacen scroll por dentro */
+#contenedor-salones, 
+#contenedor-alumnos,
+#lista-dashboard {
+    flex-grow: 1 !important;
+    overflow-y: auto !important; /* Activa el scroll interno */
+    overflow-x: hidden !important;
+    align-content: flex-start; /* Evita que las tarjetas se estiren raro */
+}
+
+/* Espaciados finales para que el último elemento no quede tapado por el borde del celular */
+#contenedor-salones, 
+#contenedor-alumnos {
+    padding-bottom: 120px !important; 
+}
+#lista-dashboard {
+    padding-bottom: 100px !important; 
+}
+
+/* ==========================================
+   3. TÍTULOS PRINCIPALES (ROBUSTOS Y PREMIUM)
+   ========================================== */
+
+#pantalla-inicio h2 {
+    font-weight: 900 !important; /* Peso máximo */
+    color: var(--bs-primary) !important;
+    letter-spacing: -1.2px !important; /* Letras más unidas */
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2.2rem !important; /* Presencia imponente */
+}
+
+#titulo-salon {
+    font-weight: 900 !important; 
+    color: var(--bs-primary) !important;
+    letter-spacing: -0.8px !important;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem !important;
+}
+
+/* Aunque se llame titulo-poppins en el HTML, hereda Inter 900 */
+.titulo-poppins {
+    font-weight: 900 !important;
+    letter-spacing: -1px !important;
+    color: var(--bs-primary) !important;
+    font-size: 1.8rem !important;
+}
+
+/* ==========================================
+   4. COMPONENTES: BUSCADOR Y BOTONES TONALES
+   ========================================== */
+
+/* ==========================================
+   4. COMPONENTES: BUSCADOR Y BOTONES TONALES
+   ========================================== */
+
+/* El texto de fondo (susurro visual) */
+#buscador::placeholder {
+    color: #8c98a4 !important; /* Gris medio, muy sofisticado */
+    font-weight: 400 !important; /* Letra normal y delgada */
+    font-size: 0.95rem !important; /* Un toque más pequeño que el texto normal */
+    opacity: 1 !important;
+}
+
+/* El texto real cuando la profesora escribe */
+#buscador {
+    color: #1D1B20 !important; /* Casi negro para máxima legibilidad */
+    font-weight: 500 !important; /* Seminegrita (elegante, sin ser tosco) */
+    font-size: 1rem !important; /* Tamaño estándar, no gigante */
+    /* Para quitarle lo "tosco" a la caja grande de Bootstrap */
+    padding: 0.8rem 1rem !important; 
+}
+
+/* Estilo del Botón Tonal General (Reportes y Filtros) */
+.md-tonal-button {
+    background-color: #e6ebf1 !important; /* Gris azulado con más cuerpo para contraste */
+    color: var(--bs-primary) !important;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none !important;
+    padding: 0.75rem 1.5rem;
+    
+    /* Sombra más amplia y suave (Estilo Apple/Fintech) */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.md-tonal-button:hover {
+    background-color: #dbe2ea !important; /* Se oscurece un poco al pasar el mouse */
+}
+
+.md-tonal-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 3px rgba(108, 117, 125, 0.2) !important;
+}
+
+/* ==========================================
+   5. COMPONENTES: LISTAS Y TARJETAS
+   ========================================== */
+
+.edad-header {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--bs-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0rem;
+    padding-left: 0.5rem;
+    text-align: center;
+}
+
+.tarjeta-salon {
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600 !important; /* Negrita limpia */
+    letter-spacing: -0.3px !important; 
+    font-size: 1.05rem !important; 
+}
+.tarjeta-salon:active { transform: scale(0.95); }
+
+.md-light-header {
+    background-color: #ffffff;
+    padding-bottom: 1.5rem;
+    border-radius: 12px;
+}
+
+.md-list-container {
+    background: white;
+    border-radius: 16px;
+    padding: 0.5rem 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.md-list-item {
+    border: none !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    border-radius: 0 !important;
+    padding: 1rem 1.2rem !important;
+    background: transparent;
+}
+.md-list-item:last-child { border-bottom: none !important; }
+
+.md-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* Nombres en la lista y en la tarjeta de cobro */
+.fw-bold.text-dark.fs-6, 
+#nombre-alumno {
+    font-weight: 700 !important; 
+    letter-spacing: -0.3px; 
+}
+
+/* ==========================================
+   6. COMPONENTES: REGISTRO DE PAGO Y DASHBOARD
+   ========================================== */
+
+#btn-guardar {
+    box-shadow: 0 4px 8px rgba(0, 100, 255, 0.2), 0 2px 4px rgba(0, 100, 255, 0.1) !important;
+    transition: all 0.2s ease-in-out;
+}
+#btn-guardar:hover:not(:disabled) {
+    box-shadow: 0 6px 12px rgba(0, 100, 255, 0.25), 0 3px 6px rgba(0, 100, 255, 0.15) !important;
+    transform: translateY(-2px);
+}
+#btn-guardar:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 100, 255, 0.15) !important;
+}
+
+.filtro-activo {
+    border: 2px solid var(--bs-primary) !important;
+    background-color: var(--bs-primary-bg-subtle) !important;
+    color: var(--bs-primary) !important;
+    font-weight: bold;
+}
+
+#filtro-dia::placeholder {
+    color: #212529 !important;
+    opacity: 1; 
+}
+
+/* ==========================================
+   7. REPORTE MATRIZ (ESTILO EXCEL)
+   ========================================== */
+
+#cuerpo-tabla-reporte th {
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+#pantalla-reporte thead th {
+    background-color: #f4f7f9 !important; 
+    color: var(--bs-primary) !important; 
+    border-bottom: 2px solid rgba(0, 100, 255, 0.1) !important; 
+}
+
+#pantalla-reporte thead th:first-child { background-color: #f4f7f9 !important; }
+
+#cuerpo-tabla-reporte td:first-child {
+    font-weight: 600 !important;
+    color: #1D1B20 !important;
+    font-size: 0.9rem !important;
+    letter-spacing: -0.3px !important;
+    text-align: left !important;
+    padding-left: 1rem !important;
+}
+
+.table-bordered { border-color: rgba(0,0,0,0.05) !important; }
+.table-striped tbody tr:nth-of-type(odd) { background-color: rgba(0,0,0,0.02) !important; }
+
+#pantalla-reporte thead th:first-child,
+#cuerpo-tabla-reporte td:first-child {
+    white-space: nowrap !important; 
+    width: 1% !important; 
+}
+
+/* ==========================================
+   8. ANIMACIONES Y SNACKBAR (MODALES)
+   ========================================== */
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.snackbar-error {
+    position: fixed;
+    bottom: -100px; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #B3261E; 
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(179, 38, 30, 0.3);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+    transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+.snackbar-error.mostrar {
+    bottom: 30px; 
+}
