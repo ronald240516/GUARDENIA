@@ -2,7 +2,7 @@
 // 1. CONEXIÓN A LA BASE DE DATOS (FIREBASE)
 // ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, enableIndexedDbPersistence, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, enableIndexedDbPersistence, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCUF_oOiCvemfIyvCgcvaezIno96aHNvN8",
@@ -15,6 +15,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+let pantallaOrigen = 'inicio'; // Puede ser 'inicio' o 'aula'
 
 // ==========================================
 // ACTIVAR EL MODO SÚPER RÁPIDO (Caché Offline)
@@ -231,6 +233,7 @@ window.mostrarAlumnosPorSalon = function(nombreSalon) {
 // PREPARAR REGISTRO DE COBRO
 // ==========================================
 window.prepararRegistro = async function(nombre, aula) {
+    
     const datosAlumno = listaAlumnosBD.find(a => a.ALUMNO === nombre);
     const docente = datosAlumno ? datosAlumno.DOCENTE : "Desconocida";
 
@@ -249,7 +252,12 @@ window.prepararRegistro = async function(nombre, aula) {
     totalCalculado = 0;
     textoTotal.innerText = `S/. 0.00`;
     inputTicket.value = "";
-    
+    const pantallaInicio = document.getElementById('pantalla-inicio');
+    if (!pantallaInicio.classList.contains('oculto')) {
+        pantallaOrigen = 'inicio'; // Vino desde el buscador
+    } else {
+        pantallaOrigen = 'alumnos'; // Vino desde la lista del aula
+    }
     checkboxes.forEach(function(cb) {
         cb.disabled = false;
         cb.checked = false;
@@ -459,7 +467,7 @@ btnConfirmarPago.addEventListener('click', async function() {
 
         setTimeout(() => {
             modalExito.classList.add('oculto'); 
-            cambiarPantalla('inicio');          
+            cambiarPantalla(pantallaOrigen);          
         }, 2000);
 
     } catch (error) {
@@ -647,3 +655,56 @@ document.querySelectorAll('.input-filtro').forEach(input => {
         }
     });
 });
+
+// ==========================================
+// HERRAMIENTA TEMPORAL: Actualizar Profesora
+// ==========================================
+window.cambiarProfesoraMasivo = async function(nombreAula, nuevoNombreDocente) {
+    try {
+        console.log(`Buscando alumnos del aula: ${nombreAula}...`);
+        
+        // 1. Buscamos a todos los niños de esa aula
+        const q = query(collection(db, "Alumnos"), where("AULA", "==", nombreAula));
+        const resultados = await getDocs(q);
+        
+        if (resultados.empty) {
+            console.log("No se encontraron alumnos en esa aula. Revisa el nombre.");
+            return;
+        }
+
+        let contador = 0;
+        
+        // 2. Actualizamos uno por uno a velocidad luz
+        resultados.forEach(async (documento) => {
+            const docRef = doc(db, "Alumnos", documento.id);
+            await updateDoc(docRef, { DOCENTE: nuevoNombreDocente });
+            contador++;
+        });
+        
+        console.log(`✅ ¡Éxito! Se actualizó la profesora a ${contador} alumnos.`);
+        
+    } catch (error) {
+        console.error("Hubo un error:", error);
+    }
+}
+// ==========================================
+// HERRAMIENTA TEMPORAL: Subir Nueva Aula Masivamente
+// ==========================================
+window.subirNuevaAula = async function(listaAlumnosJSON) {
+    try {
+        console.log(`Iniciando la carga de ${listaAlumnosJSON.length} alumnos...`);
+        let contador = 0;
+        
+        // Recorremos la lista y subimos uno por uno a Firebase
+        for (const alumno of listaAlumnosJSON) {
+            await addDoc(collection(db, "Alumnos"), alumno);
+            contador++;
+            console.log(`Subido: ${alumno.ALUMNO} (${contador}/${listaAlumnosJSON.length})`);
+        }
+        
+        console.log("✅ ¡Éxito total! Toda el aula ha sido guardada en la Base de Datos.");
+        
+    } catch (error) {
+        console.error("Hubo un error al subir los alumnos:", error);
+    }
+}

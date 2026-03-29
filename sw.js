@@ -1,5 +1,5 @@
 // ¡NUEVO! Cambiamos a v4 para que el celular despierte y descargue el ícono
-const NOMBRE_CACHE = 'guardiania-cache-v4';
+const NOMBRE_CACHE = 'guardiania-cache-v5';
 
 const archivosAGuardar = [
     './',
