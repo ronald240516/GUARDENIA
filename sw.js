@@ -1,15 +1,14 @@
-// Cambiamos a v3 para obligar al celular a descargar los nuevos diseños
-const NOMBRE_CACHE = 'guardiania-cache-v3';
+// ¡NUEVO! Cambiamos a v4 para que el celular despierte y descargue el ícono
+const NOMBRE_CACHE = 'guardiania-cache-v4';
 
-// Aquí le decimos qué archivos exactos debe guardar en el celular
 const archivosAGuardar = [
     './',
     './index.html',
     './style.css',
     './script.js',
     './manifest.json',
+    './icono-guardian.png', // <--- ¡ESTO FALTABA! Pon el nombre exacto de tu imagen PNG
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-    // ¡NUEVO! Guardamos la tipografía elegante y los íconos para que funcionen sin internet
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap',
     'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
 ];
