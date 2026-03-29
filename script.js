@@ -297,66 +297,80 @@ cargarDatosDesdeFirebase();
 // ==========================================
 // BUSCADOR INTELIGENTE
 // ==========================================
+// ==========================================
+// EL BUSCADOR INTELIGENTE (OPTIMIZADO PARA VELOCIDAD EXTREMA)
+// ==========================================
+let temporizadorBuscador; // Variable para el efecto "Debounce"
+
 buscador.addEventListener('input', function(evento) {
-    const textoBuscado = evento.target.value.toLowerCase().trim(); 
-    
-    if (textoBuscado === "") {
-        mostrarSalones(salonesUnicos);
-        return; 
-    }
+    // 1. Si sigue escribiendo rápido, cancelamos la búsqueda anterior para no saturar
+    clearTimeout(temporizadorBuscador); 
 
-    contenedor.innerHTML = ""; 
+    // 2. Esperamos una fracción de segundo (150ms) antes de accionar
+    temporizadorBuscador = setTimeout(() => {
+        const textoBuscado = evento.target.value.toLowerCase().trim(); 
+        
+        if (textoBuscado === "") {
+            mostrarSalones(salonesUnicos);
+            return; 
+        }
 
-    const salonesFiltrados = salonesUnicos.filter(salon => salon.toLowerCase().includes(textoBuscado));
-    const alumnosFiltrados = listaAlumnosBD.filter(alumno => 
-        alumno.ALUMNO.toLowerCase().includes(textoBuscado) || 
-        alumno.DOCENTE.toLowerCase().includes(textoBuscado)
-    );
+        // 3. Filtramos los datos en memoria (Esto toma 0.001 segundos)
+        const salonesFiltrados = salonesUnicos.filter(salon => salon.toLowerCase().includes(textoBuscado));
+        const alumnosFiltrados = listaAlumnosBD.filter(alumno => 
+            alumno.ALUMNO.toLowerCase().includes(textoBuscado) || 
+            alumno.DOCENTE.toLowerCase().includes(textoBuscado)
+        );
 
-    // ==========================================
-    // ¡CORRECCIÓN AQUÍ! (Había un bucle anidado erróneo)
-    // ==========================================
-    salonesFiltrados.forEach(function(salon) {
-        // TRUCO DE DISEÑO: Capitalizamos el nombre
-        const salonCapitalizado = salon.charAt(0).toUpperCase() + salon.slice(1).toLowerCase();
+        // 4. EL SECRETO: Creamos una variable de texto vacía. 
+        // No tocamos la pantalla real todavía.
+        let htmlAcumulado = ""; 
 
-        const tarjetaHTML = `
-            <div class="col-6"> 
-                <div class="card tarjeta-salon shadow-sm bg-white p-3 text-center text-primary fw-bold" onclick="mostrarAlumnosPorSalon('${salon}')">
-                    ${salonCapitalizado}
+        // 5. Acumulamos los salones en nuestra variable invisible
+        salonesFiltrados.forEach(function(salon) {
+            htmlAcumulado += `
+                <div class="col-6"> 
+                    <div class="card tarjeta-salon shadow-sm bg-white p-3 text-center text-primary fw-bold" 
+                         onclick="mostrarAlumnosPorSalon('${salon}')">
+                         ${salon}
+                    </div>
                 </div>
-            </div>
-        `;
-        contenedor.innerHTML += tarjetaHTML;
-    });
+            `;
+        });
 
-    alumnosFiltrados.forEach(function(alumno) {
-        const inicial = alumno.ALUMNO.charAt(0).toUpperCase();
-        const itemHTML = `
-            <div class="col-12 mt-1">
-                <button class="list-group-item list-group-item-action d-flex align-items-center w-100 text-start shadow-sm border-0 mb-2" 
-                        style="border-radius: 16px; padding: 1rem 1.2rem; background: white;"
-                        onclick="prepararRegistro('${alumno.ALUMNO}', '${alumno.AULA}')">
-                    <div class="md-avatar me-3 shadow-sm flex-shrink-0">${inicial}</div>
-                    <div class="flex-grow-1 overflow-hidden">
-                        <div class="fw-bold text-dark fs-6 text-truncate" style="letter-spacing: -0.3px;">${alumno.ALUMNO}</div>
-                        <div class="mt-1" style="font-size: 0.8rem; font-weight: 500; color: #6c757d;">
-                            <div class="text-primary fw-bold opacity-75 mb-1">Aula ${alumno.AULA}</div>
-                            <div class="text-truncate">Prof. ${alumno.DOCENTE}</div>
+        // 6. Acumulamos los alumnos (Ya incluye tu nuevo diseño de flecha redonda)
+        alumnosFiltrados.forEach(function(alumno) {
+            const inicial = alumno.ALUMNO.charAt(0).toUpperCase();
+            htmlAcumulado += `
+                <div class="col-12 mt-1">
+                    <button class="list-group-item list-group-item-action d-flex align-items-center w-100 text-start shadow-sm border-0 mb-2" 
+                            style="border-radius: 16px; padding: 1rem 1.2rem; background: white;"
+                            onclick="prepararRegistro('${alumno.ALUMNO}', '${alumno.AULA}')">
+                        <div class="md-avatar me-3 shadow-sm flex-shrink-0">${inicial}</div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="fw-bold text-dark fs-6 text-truncate" style="letter-spacing: -0.3px;">${alumno.ALUMNO}</div>
+                            <div class="mt-1" style="font-size: 0.8rem; font-weight: 500; color: #6c757d;">
+                                <div class="text-primary fw-bold opacity-75 mb-1">Aula ${alumno.AULA}</div>
+                                <div class="text-truncate">Prof. ${alumno.DOCENTE}</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ms-2" style="width: 36px; height: 36px; background-color: #f3f4f6;">
-                        <span class="material-symbols-outlined text-secondary" style="font-size: 1.2rem;">chevron_right</span>
-                    </div>
-                </button>
-            </div>
-        `;
-        contenedor.innerHTML += itemHTML;
-    });
+                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ms-2" style="width: 36px; height: 36px; background-color: #f3f4f6;">
+                            <span class="material-symbols-outlined text-secondary" style="font-size: 1.2rem;">chevron_right</span>
+                        </div>
+                    </button>
+                </div>
+            `;
+        });
 
-    if (salonesFiltrados.length === 0 && alumnosFiltrados.length === 0) {
-        contenedor.innerHTML = "<p class='text-center text-muted w-100 mt-4'>Sin resultados.</p>";
-    }
+        // Si no hay nada, ponemos el mensaje de vacío
+        if (salonesFiltrados.length === 0 && alumnosFiltrados.length === 0) {
+            htmlAcumulado = "<p class='text-center text-muted w-100 mt-4'>Sin resultados.</p>";
+        }
+
+        // 7. ¡LA MAGIA! Ahora sí, le mandamos todo el bloque armado a la pantalla UNA SOLA VEZ.
+        contenedor.innerHTML = htmlAcumulado;
+
+    }, 150); // El tiempo de espera en milisegundos
 });
 
 // ==========================================
