@@ -16,7 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let pantallaOrigen = 'inicio'; // Puede ser 'inicio' o 'aula'
 
 // ==========================================
 // ACTIVAR EL MODO SÚPER RÁPIDO (Caché Offline)
@@ -252,12 +251,7 @@ window.prepararRegistro = async function(nombre, aula) {
     totalCalculado = 0;
     textoTotal.innerText = `S/. 0.00`;
     inputTicket.value = "";
-    const pantallaInicio = document.getElementById('pantalla-inicio');
-    if (!pantallaInicio.classList.contains('oculto')) {
-        pantallaOrigen = 'inicio'; // Vino desde el buscador
-    } else {
-        pantallaOrigen = 'alumnos'; // Vino desde la lista del aula
-    }
+
     checkboxes.forEach(function(cb) {
         cb.disabled = false;
         cb.checked = false;
@@ -467,7 +461,8 @@ btnConfirmarPago.addEventListener('click', async function() {
 
         setTimeout(() => {
             modalExito.classList.add('oculto'); 
-            cambiarPantalla(pantallaOrigen);          
+            // Le decimos al celular que presione su propio botón de "Atrás" virtualmente
+            history.back();        
         }, 2000);
 
     } catch (error) {
